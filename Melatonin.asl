@@ -19,19 +19,12 @@ init
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         vars.Helper["gameModeQueued"] = mono.Make<int>("Dream", "gameModeQueued");
-        vars.Helper["playerDataOff"] = mono.Make<IntPtr>("SaveManager", "playerData");
+        vars.Helper["cn"] = mono.Make<int>("SaveManager", "playerData", 0x40);
+        vars.Helper["scores"] = mono.MakeSpan<int>(42, "SaveManager", "playerData", 0x44);
+        vars.Helper["achieves"] = mono.MakeSpan<bool>(2, "SaveManager", "playerData", 0x17);
 
         return true;
     });
-}
-
-update
-{
-    if (current.playerDataOff != IntPtr.Zero) {
-        current.cn = vars.Helper.Read<int>(current.playerDataOff + 0x40);
-        current.scores = vars.Helper.ReadSpan<int>(42, current.playerDataOff + 0x44);
-        current.achieves = vars.Helper.ReadSpan<byte>(2, current.playerDataOff + 0x17);
-    }
 }
 
 start
@@ -47,7 +40,7 @@ split
         if (enabled && old.scores[i] < thresh && current.scores[i] >= thresh) return true;
     }
     for (int i=0; i < 2; ++i) {
-        if (settings["achieve"] && old.achieves[i] == 0 && current.achieves[i] != 0) return true;
+        if (settings["achieve"] && !old.achieves[i] && current.achieves[i]) return true;
     }
     return false;
 }
