@@ -18,10 +18,13 @@ init
 {
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
+        var sm = mono["SaveManager"];
+        var pd = mono["playerData"];
+
         vars.Helper["gameModeQueued"] = mono.Make<int>("Dream", "gameModeQueued");
-        vars.Helper["cn"] = mono.Make<int>("SaveManager", "playerData", 0x40);
-        vars.Helper["scores"] = mono.MakeSpan<int>(42, "SaveManager", "playerData", 0x44);
-        vars.Helper["achieves"] = mono.MakeSpan<bool>(2, "SaveManager", "playerData", 0x17);
+        vars.Helper["cn"] = mono.Make<int>("SaveManager", "playerData", "cn");
+        vars.Helper["scores"] = vars.Helper.MakeSpan<int>(42, sm.Static + sm["playerData"], pd["fd"]);
+        vars.Helper["achieves"] = vars.Helper.MakeSpan<bool>(2, sm.Static + sm["playerData"], pd["isTp"]);
 
         return true;
     });
