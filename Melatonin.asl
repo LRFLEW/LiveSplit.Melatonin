@@ -43,7 +43,7 @@ split
 {
     int thresh = settings["perfect"] ? 4 : settings["three"] ? 3 : settings["two"] ? 2 : 1;
     for (int i=0; i < 42; ++i) {
-        bool enabled = i % 2 == 1 ? settings["hard"] : i % 10 == 8 || i == 41 ? settings["remix"] : settings["normal"];
+        bool enabled = i % 2 == 1 ? settings["hard"] : i % 10 == 8 || i == 40 ? settings["remix"] : settings["normal"];
         if (enabled && old.scores[i] < thresh && current.scores[i] >= thresh) return true;
     }
     for (int i=0; i < 2; ++i) {
