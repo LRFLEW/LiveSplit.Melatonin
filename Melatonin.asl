@@ -23,7 +23,9 @@ init
     {
         var sm = mono["SaveManager"];
         var pd = mono["playerData"];
+        var bd = mono["Builder"];
 
+        vars.Helper["isLoadWaiting"] = mono.Make<bool>("SceneMonitor", "mgr", "isLoadWaiting");
         vars.Helper["gameModeQueued"] = mono.Make<int>("Dream", "gameModeQueued");
         vars.Helper["cn"] = mono.Make<int>("SaveManager", "playerData", "cn");
         vars.Helper["scores"] = vars.Helper.MakeSpan<int>(42, sm.Static + sm["playerData"], pd["fd"]);
@@ -53,4 +55,9 @@ split
         }
     }
     return false;
+}
+
+isLoading
+{
+    return current.isLoadWaiting;
 }
