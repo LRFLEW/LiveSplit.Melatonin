@@ -1,5 +1,7 @@
 state("Melatonin") { }
 
+state("Melatonin_Demo") { }
+
 startup
 {
     Assembly.Load(File.ReadAllBytes("Components/asl-help")).CreateInstance("Unity");
@@ -16,6 +18,7 @@ startup
 
 init
 {
+    vars.isDemo = game.ProcessName == "Melatonin_Demo";
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         var sm = mono["SaveManager"];
@@ -24,7 +27,9 @@ init
         vars.Helper["gameModeQueued"] = mono.Make<int>("Dream", "gameModeQueued");
         vars.Helper["cn"] = mono.Make<int>("SaveManager", "playerData", "cn");
         vars.Helper["scores"] = vars.Helper.MakeSpan<int>(42, sm.Static + sm["playerData"], pd["fd"]);
-        vars.Helper["achieves"] = vars.Helper.MakeSpan<bool>(2, sm.Static + sm["playerData"], pd["isTp"]);
+        if (!vars.isDemo) {
+            vars.Helper["achieves"] = vars.Helper.MakeSpan<bool>(2, sm.Static + sm["playerData"], pd["isTp"]);
+        }
 
         return true;
     });
@@ -42,8 +47,10 @@ split
         bool enabled = i % 2 == 1 ? settings["hard"] : i % 10 == 8 || i == 40 ? settings["remix"] : settings["normal"];
         if (enabled && old.scores[i] < thresh && current.scores[i] >= thresh) return true;
     }
-    for (int i=0; i < 2; ++i) {
-        if (settings["achieve"] && !old.achieves[i] && current.achieves[i]) return true;
+    if (!vars.isDemo) {
+        for (int i=0; i < 2; ++i) {
+            if (settings["achieve"] && !old.achieves[i] && current.achieves[i]) return true;
+        }
     }
     return false;
 }
